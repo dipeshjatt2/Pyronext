@@ -30,9 +30,14 @@ class InlineKeyboardMarkup(Object):
         inline_keyboard = []
 
         for i in o.rows:
-            row = [types.InlineKeyboardButton.read(j) for j in i.buttons]
+            row = [
+                button
+                for j in i.buttons
+                if (button := types.InlineKeyboardButton.read(j)) is not None
+            ]
 
-            inline_keyboard.append(row)
+            if row:
+                inline_keyboard.append(row)
 
         return InlineKeyboardMarkup(inline_keyboard=inline_keyboard)
 
@@ -40,9 +45,11 @@ class InlineKeyboardMarkup(Object):
         rows = []
 
         for r in self.inline_keyboard:
-            buttons = [await b.write(client) for b in r]
+            buttons: list[raw.base.KeyboardInlineButton] = [
+                button for b in r if (button := await b.write(client)) is not None
+            ]
 
-            rows.append(raw.types.KeyboardButtonRow(buttons=buttons))
+            rows.append(raw.types.KeyboardInlineButtonRow(buttons=buttons))
 
         return raw.types.ReplyInlineMarkup(rows=rows)
 
@@ -50,7 +57,7 @@ class InlineKeyboardMarkup(Object):
         # See: https://bugs.python.org/issue33346
         #
         # return raw.types.ReplyInlineMarkup(
-        #     rows=[raw.types.KeyboardButtonRow(
+        #     rows=[raw.types.KeyboardInlineButtonRow(
         #         buttons=[await j.write(client) for j in i]
         #     ) for i in self.inline_keyboard]
         # )

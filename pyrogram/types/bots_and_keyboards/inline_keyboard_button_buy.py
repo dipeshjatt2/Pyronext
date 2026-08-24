@@ -39,14 +39,15 @@ class InlineKeyboardButtonBuy(Object):
                 self.style.icon = icon
 
     @staticmethod
-    def read(b):
+    def read(b: raw.base.KeyboardInlineButton) -> InlineKeyboardButtonBuy:
         return InlineKeyboardButtonBuy(
             text=b.text,
             style=types.KeyboardButtonStyle.read(getattr(b, "style", None)),
         )
 
-    async def write(self, _: pyrogram.Client):
-        return raw.types.KeyboardButtonBuy(
+    async def write(self, _: pyrogram.Client) -> raw.types.KeyboardInlineButton:
+        return raw.types.KeyboardInlineButton(
             text=self.text,
+            type=raw.types.InlineButtonTypeBuy(),
             style=self.style.write() if self.style else None,
         )

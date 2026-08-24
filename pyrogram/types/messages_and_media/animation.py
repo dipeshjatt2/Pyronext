@@ -84,7 +84,7 @@ class Animation(Object):
     @staticmethod
     def _parse(
         client,
-        animation: raw.types.Document,
+        animation: raw.base.Document,
         video_attributes: raw.base.DocumentAttribute | None,
         file_name: str | None,
     ) -> Animation | None:

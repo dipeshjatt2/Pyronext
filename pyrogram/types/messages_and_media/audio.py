@@ -83,7 +83,7 @@ class Audio(Object):
     @staticmethod
     def _parse(
         client,
-        audio: raw.types.Document,
+        audio: raw.base.Document,
         audio_attributes: raw.base.DocumentAttribute | None,
         file_name: str | None,
     ) -> Audio:

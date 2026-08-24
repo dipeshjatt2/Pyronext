@@ -39,10 +39,14 @@ class SendMessage:
         update_stickersets_order: bool | None = None,
         suggested_post: types.SuggestedPost | None = None,
         reply_markup: types.InlineKeyboardMarkup
-        | None
         | types.ReplyKeyboardMarkup
         | types.ReplyKeyboardRemove
-        | types.ForceReply = None,
+        | types.ForceReply
+        | None = None,
+        rich_message: str | types.InputRichMessage | None = None,
+        rich_message_media: types.InputRichMessageMedia
+        | list[types.InputRichMessageMedia]
+        | None = None,
     ) -> types.Message | None:
         """Send text messages.
 
@@ -142,6 +146,15 @@ class SendMessage:
                 Additional interface options. An object for an inline keyboard, custom reply keyboard,
                 instructions to remove reply keyboard or to force a reply from the user.
 
+            rich_message (``str`` | :obj:`~pyrogram.types.InputRichMessage`, *optional*):
+                Send a rich formatted message instead of a plain text one.
+                Pass a string with HTML or Markdown content, or an
+                :obj:`~pyrogram.types.InputRichMessage` for full control.
+                When provided, *text* is used as the fallback plain text of the message.
+
+            rich_message_media (:obj:`~pyrogram.types.InputRichMessageMedia` | List of :obj:`~pyrogram.types.InputRichMessageMedia`, *optional*):
+                Media referenced by the rich message.
+
         Returns:
             :obj:`~pyrogram.types.Message`: On success, the sent text message is returned.
 
@@ -198,6 +211,31 @@ class SendMessage:
             parse_mode=parse_mode,
         )
 
+        rich_message_rpc = None
+
+        if rich_message is not None:
+            if isinstance(rich_message, types.InputRichMessage):
+                rich_message_rpc = rich_message.write()
+            else:
+                files = (
+                    types.InputRichMessage(
+                        html="_", media=rich_message_media
+                    ).write_files()
+                    if rich_message_media
+                    else None
+                )
+
+                if parse_mode == enums.ParseMode.HTML:
+                    rich_message_rpc = raw.types.InputRichMessageHTML(
+                        html=rich_message,
+                        files=files,
+                    )
+                else:
+                    rich_message_rpc = raw.types.InputRichMessageMarkdown(
+                        markdown=rich_message,
+                        files=files,
+                    )
+
         rpc = raw.functions.messages.SendMessage(
             peer=utils.get_input_peer(await self.resolve_peer(chat_id)),
             no_webpage=disable_web_page_preview or None,
@@ -224,6 +262,7 @@ class SendMessage:
             else None,
             allow_paid_stars=allow_paid_stars,
             suggested_post=await suggested_post.write() if suggested_post else None,
+            rich_message=rich_message_rpc,
         )
         if business_connection_id is not None:
             r = await self.invoke(

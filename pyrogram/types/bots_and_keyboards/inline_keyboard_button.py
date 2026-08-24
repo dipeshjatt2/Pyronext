@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import pyrogram
-from pyrogram import enums, raw, types
+from pyrogram import enums, raw, types, utils
 from pyrogram.types.object import Object
 
 
@@ -51,11 +51,15 @@ class InlineKeyboardButton(Object):
             Description of the game that will be launched when the user presses the button.
             **NOTE**: This type of button **must** always be the first button in the first row.
 
-        callback_data_with_password (``bytes``, *optional*):
-            A button that asks for the 2-step verification password of the current user and then sends a callback query to a bot Data to be sent to the bot via a callback query.
+        requires_password (``bool``, *optional*):
+            A button that asks for the 2-step verification password of the current user and then sends a callback
+            query to a bot. Data to be sent to the bot via a callback query.
 
         copy_text (``str``, *optional*):
             A button that copies the text to the clipboard.
+
+        disabled (``bool``, *optional*):
+            True, if the button is disabled and cannot be pressed.
 
         style (:obj:`~pyrogram.types.KeyboardButtonStyle` | :obj:`~pyrogram.enums.ButtonStyle`, *optional*):
             Button style.
@@ -77,6 +81,7 @@ class InlineKeyboardButton(Object):
         callback_game: types.CallbackGame | None = None,
         requires_password: bool | None = None,
         copy_text: str | None = None,
+        disabled: bool | None = None,
         style: types.KeyboardButtonStyle | enums.ButtonStyle | None = None,
         icon: int | None = None,
     ) -> None:
@@ -93,6 +98,7 @@ class InlineKeyboardButton(Object):
         self.callback_game = callback_game
         self.requires_password = requires_password
         self.copy_text = copy_text
+        self.disabled = disabled
         self.style = types.KeyboardButtonStyle._parse(style)
 
         if icon is not None:
@@ -102,76 +108,97 @@ class InlineKeyboardButton(Object):
                 self.style.icon = icon
 
     @staticmethod
-    def read(b: raw.base.KeyboardButton):
+    def read(
+        b: raw.base.KeyboardInlineButton,
+    ) -> types.InlineKeyboardButton | types.InlineKeyboardButtonBuy | None:
         style = types.KeyboardButtonStyle.read(getattr(b, "style", None))
+        button_type = getattr(b, "type", None)
 
-        if isinstance(b, raw.types.KeyboardButtonCallback):
+        if isinstance(button_type, raw.types.InlineButtonTypeCallback):
             # Try decode data to keep it as string, but if fails, fallback to bytes so we don't lose any information,
             # instead of decoding by ignoring/replacing errors.
             try:
-                data = b.data.decode()
+                data = button_type.data.decode()
             except UnicodeDecodeError:
-                data = b.data
+                data = button_type.data
 
             return InlineKeyboardButton(
                 text=b.text,
                 callback_data=data,
-                requires_password=getattr(b, "requires_password", None),
+                requires_password=button_type.requires_password,
                 style=style,
             )
 
-        if isinstance(b, raw.types.KeyboardButtonUrl):
-            return InlineKeyboardButton(text=b.text, url=b.url, style=style)
+        if isinstance(button_type, raw.types.InlineButtonTypeUrl):
+            return InlineKeyboardButton(
+                text=b.text, url=button_type.url, style=style
+            )
 
-        if isinstance(b, raw.types.KeyboardButtonUrlAuth):
+        if isinstance(
+            button_type,
+            raw.types.InlineButtonTypeUrlAuth
+            | raw.types.InputInlineButtonTypeUrlAuth,
+        ):
             return InlineKeyboardButton(
                 text=b.text,
-                login_url=types.LoginUrl.read(b),
+                login_url=types.LoginUrl.read(button_type),
                 style=style,
             )
 
-        if isinstance(b, raw.types.KeyboardButtonUserProfile):
-            return InlineKeyboardButton(text=b.text, user_id=b.user_id, style=style)
+        if isinstance(
+            button_type,
+            raw.types.InlineButtonTypeUserProfile
+            | raw.types.InputInlineButtonTypeUserProfile,
+        ):
+            return InlineKeyboardButton(
+                text=b.text, user_id=button_type.user_id, style=style
+            )
 
-        if isinstance(b, raw.types.KeyboardButtonSwitchInline):
-            if b.same_peer:
+        if isinstance(button_type, raw.types.InlineButtonTypeSwitchInline):
+            if button_type.same_peer:
                 return InlineKeyboardButton(
                     text=b.text,
-                    switch_inline_query_current_chat=b.query,
+                    switch_inline_query_current_chat=button_type.query,
                     style=style,
                 )
             return InlineKeyboardButton(
                 text=b.text,
-                switch_inline_query=b.query,
+                switch_inline_query=button_type.query,
                 style=style,
             )
 
-        if isinstance(b, raw.types.KeyboardButtonGame):
+        if isinstance(button_type, raw.types.InlineButtonTypeGame):
             return InlineKeyboardButton(
                 text=b.text,
                 callback_game=types.CallbackGame(),
                 style=style,
             )
 
-        if isinstance(b, raw.types.KeyboardButtonWebView):
+        if isinstance(button_type, raw.types.InlineButtonTypeWebView):
             return InlineKeyboardButton(
                 text=b.text,
-                web_app=types.WebAppInfo(url=b.url),
+                web_app=types.WebAppInfo(url=button_type.url),
                 style=style,
             )
 
-        if isinstance(b, raw.types.KeyboardButtonCopy):
-            return types.InlineKeyboardButton(
+        if isinstance(button_type, raw.types.InlineButtonTypeCopy):
+            return InlineKeyboardButton(
                 text=b.text,
-                copy_text=b.copy_text,
+                copy_text=button_type.copy_text,
                 style=style,
             )
 
-        if isinstance(b, raw.types.KeyboardButtonBuy):
+        if isinstance(button_type, raw.types.InlineButtonTypeBuy):
             return types.InlineKeyboardButtonBuy.read(b)
+
+        if isinstance(button_type, raw.types.InlineButtonTypeDisabled):
+            return InlineKeyboardButton(text=b.text, disabled=True, style=style)
+
         return None
 
-    async def write(self, client: pyrogram.Client):
+    async def write(
+        self, client: pyrogram.Client
+    ) -> raw.types.KeyboardInlineButton | None:
         style = self.style.write() if self.style else None
 
         if self.callback_data is not None:
@@ -182,62 +209,91 @@ class InlineKeyboardButton(Object):
                 else self.callback_data
             )
 
-            return raw.types.KeyboardButtonCallback(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                data=data,
-                requires_password=self.requires_password,
+                type=raw.types.InlineButtonTypeCallback(
+                    data=data,
+                    requires_password=self.requires_password or None,
+                ),
                 style=style,
             )
 
         if self.url is not None:
-            return raw.types.KeyboardButtonUrl(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                url=self.url,
+                type=raw.types.InlineButtonTypeUrl(url=self.url),
                 style=style,
             )
 
         if self.login_url is not None:
-            return self.login_url.write(
+            button_type = await self.login_url.write(
+                bot=utils.get_input_user(
+                    await client.resolve_peer(self.login_url.bot_username or "self")
+                ),
+            )
+
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                bot=await client.resolve_peer(self.login_url.bot_username or "self"),
+                type=button_type,
                 style=style,
             )
 
         if self.user_id is not None:
-            return raw.types.InputKeyboardButtonUserProfile(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                user_id=await client.resolve_peer(self.user_id),
+                type=raw.types.InputInlineButtonTypeUserProfile(
+                    user_id=utils.get_input_user(
+                        await client.resolve_peer(self.user_id)
+                    ),
+                ),
                 style=style,
             )
 
         if self.switch_inline_query is not None:
-            return raw.types.KeyboardButtonSwitchInline(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                query=self.switch_inline_query,
+                type=raw.types.InlineButtonTypeSwitchInline(
+                    query=self.switch_inline_query
+                ),
                 style=style,
             )
 
         if self.switch_inline_query_current_chat is not None:
-            return raw.types.KeyboardButtonSwitchInline(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                query=self.switch_inline_query_current_chat,
-                same_peer=True,
+                type=raw.types.InlineButtonTypeSwitchInline(
+                    query=self.switch_inline_query_current_chat,
+                    same_peer=True,
+                ),
                 style=style,
             )
 
         if self.callback_game is not None:
-            return raw.types.KeyboardButtonGame(text=self.text, style=style)
+            return raw.types.KeyboardInlineButton(
+                text=self.text,
+                type=raw.types.InlineButtonTypeGame(),
+                style=style,
+            )
 
         if self.web_app is not None:
-            return raw.types.KeyboardButtonWebView(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                url=self.web_app.url,
+                type=raw.types.InlineButtonTypeWebView(url=self.web_app.url),
                 style=style,
             )
+
         if self.copy_text is not None:
-            return raw.types.KeyboardButtonCopy(
+            return raw.types.KeyboardInlineButton(
                 text=self.text,
-                copy_text=self.copy_text,
+                type=raw.types.InlineButtonTypeCopy(copy_text=self.copy_text),
                 style=style,
             )
+
+        if self.disabled:
+            return raw.types.KeyboardInlineButton(
+                text=self.text,
+                type=raw.types.InlineButtonTypeDisabled(),
+                style=style,
+            )
+
         return None

@@ -426,6 +426,9 @@ class Message(Object, Update):
             Additional interface options. An object for an inline keyboard, custom reply keyboard,
             instructions to remove reply keyboard or to force a reply from the user.
 
+        rich_message (:obj:`~pyrogram.types.RichMessage`, *optional*):
+            Message is a rich formatted message with structured blocks, media and embedded buttons.
+
         reactions (List of :obj:`~pyrogram.types.Reaction`):
             List of the reactions to this message.
 
@@ -603,6 +606,7 @@ class Message(Object, Update):
         | types.ForceReply
         | None = None,
         reactions: types.MessageReactions | None = None,
+        rich_message: types.RichMessage | None = None,
         chat_join_type: enums.ChatJoinType | None = None,
         raw: raw.base.Message | None = None,
     ) -> None:
@@ -729,6 +733,7 @@ class Message(Object, Update):
         self.successful_payment = successful_payment
         self.payment_refunded = payment_refunded
         self.reactions = reactions
+        self.rich_message = rich_message
         self.contact_registered = contact_registered
         self.chat_join_type = chat_join_type
         self.screenshot_taken = screenshot_taken
@@ -1399,6 +1404,14 @@ class Message(Object, Update):
                 else:
                     reply_markup = None
 
+            rich_message = (
+                await types.RichMessage._parse(
+                    client, message.rich_message, users, chats
+                )
+                if getattr(message, "rich_message", None)
+                else None
+            )
+
             from_user = types.User._parse(client, users.get(user_id))
             sender_chat = (
                 types.Chat._parse(client, message, users, chats, is_chat=False)
@@ -1502,6 +1515,7 @@ class Message(Object, Update):
                     reply_markup,
                 ),
                 reactions=reactions,
+                rich_message=rich_message,
                 offline=getattr(message, "offline", None),
                 video_processing_pending=getattr(
                     message,

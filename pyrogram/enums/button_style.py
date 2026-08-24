@@ -16,3 +16,6 @@ class ButtonStyle(AutoName):
 
     SUCCESS = auto()
     """Success button style."""
+
+    LINK = auto()
+    """Link button style (rich text buttons only)."""

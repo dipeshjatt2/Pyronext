@@ -68,7 +68,7 @@ class Voice(Object):
     @staticmethod
     def _parse(
         client,
-        voice: raw.types.Document,
+        voice: raw.base.Document,
         voice_attributes: raw.base.DocumentAttribute | None,
     ) -> Voice:
         return Voice(

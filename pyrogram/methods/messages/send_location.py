@@ -38,10 +38,10 @@ class SendLocation:
         update_stickersets_order: bool | None = None,
         suggested_post: types.SuggestedPost | None = None,
         reply_markup: types.InlineKeyboardMarkup
-        | None
         | types.ReplyKeyboardMarkup
         | types.ReplyKeyboardRemove
-        | types.ForceReply = None,
+        | types.ForceReply
+        | None = None,
     ) -> types.Message | None:
         """Send points on the map.
 

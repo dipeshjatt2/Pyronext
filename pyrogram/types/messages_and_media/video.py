@@ -93,7 +93,7 @@ class Video(Object):
     @staticmethod
     def _parse(
         client,
-        video: raw.types.Document,
+        video: raw.base.Document,
         video_attributes: raw.base.DocumentAttribute | None,
         file_name: str | None,
         ttl_seconds: int | None = None,

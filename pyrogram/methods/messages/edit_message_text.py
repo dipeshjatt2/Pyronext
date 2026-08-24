@@ -16,6 +16,10 @@ class EditMessageText:
         invert_media: bool | None = None,
         reply_markup: types.InlineKeyboardMarkup | None = None,
         business_connection_id: str | None = None,
+        rich_message: str | types.InputRichMessage | None = None,
+        rich_message_media: types.InputRichMessageMedia
+        | list[types.InputRichMessageMedia]
+        | None = None,
     ) -> types.Message | None:
         """Edit the text of messages.
 
@@ -54,6 +58,14 @@ class EditMessageText:
                 Unique identifier of the business connection.
                 for business bots only.
 
+            rich_message (``str`` | :obj:`~pyrogram.types.InputRichMessage`, *optional*):
+                Edit the message into a rich formatted message.
+                Pass a string with HTML or Markdown content, or an
+                :obj:`~pyrogram.types.InputRichMessage` for full control.
+
+            rich_message_media (:obj:`~pyrogram.types.InputRichMessageMedia` | List of :obj:`~pyrogram.types.InputRichMessageMedia`, *optional*):
+                Media referenced by the rich message.
+
         Returns:
             :obj:`~pyrogram.types.Message`: On success, the edited message is returned.
 
@@ -69,13 +81,43 @@ class EditMessageText:
                     disable_web_page_preview=True)
         """
 
+        text_params = await utils.parse_text_entities(
+            self, text, parse_mode, entities
+        )
+
+        rich_message_rpc = None
+
+        if rich_message is not None:
+            if isinstance(rich_message, types.InputRichMessage):
+                rich_message_rpc = rich_message.write()
+            else:
+                files = (
+                    types.InputRichMessage(
+                        html="_", media=rich_message_media
+                    ).write_files()
+                    if rich_message_media
+                    else None
+                )
+
+                if parse_mode == enums.ParseMode.HTML:
+                    rich_message_rpc = raw.types.InputRichMessageHTML(
+                        html=rich_message,
+                        files=files,
+                    )
+                else:
+                    rich_message_rpc = raw.types.InputRichMessageMarkdown(
+                        markdown=rich_message,
+                        files=files,
+                    )
+
         rpc = raw.functions.messages.EditMessage(
             peer=utils.get_input_peer(await self.resolve_peer(chat_id)),
             id=message_id,
             no_webpage=disable_web_page_preview or None,
             invert_media=invert_media,
             reply_markup=await reply_markup.write(self) if reply_markup else None,
-            **await utils.parse_text_entities(self, text, parse_mode, entities),
+            rich_message=rich_message_rpc,
+            **text_params,
         )
         if business_connection_id is not None:
             r = await self.invoke(

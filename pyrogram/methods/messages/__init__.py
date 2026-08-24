@@ -49,6 +49,7 @@ from .send_paid_reaction import SendPaidReaction
 from .send_photo import SendPhoto
 from .send_poll import SendPoll
 from .send_reaction import SendReaction
+from .send_rich_message import SendRichMessage
 from .send_sticker import SendSticker
 from .send_venue import SendVenue
 from .send_video import SendVideo
@@ -93,6 +94,7 @@ class Messages(
     SendPaidMedia,
     SendPaidReaction,
     SendPoll,
+    SendRichMessage,
     TranslateText,
     VotePoll,
     StopPoll,
