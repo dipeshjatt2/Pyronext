@@ -66,7 +66,7 @@ html_theme_options = {
         "edit": "material/file-edit-outline",
     },
     "site_url": "https://electrogram-docs.vercel.app/",
-    "repo_url": "https://github.com/AeonOrg/Electrogram/",
+    "repo_url": "https://github.com/dipeshjatt2/Pyronext/",
     "repo_name": "Electrogram",
     "globaltoc_collapse": True,
     "font": {
@@ -114,11 +114,11 @@ html_theme_options = {
     "social": [
         {
             "icon": "fontawesome/brands/github",
-            "link": "https://github.com/AeonOrg/Electrogram",
+            "link": "https://github.com/dipeshjatt2/Pyronext",
         },
         {
             "icon": "fontawesome/brands/telegram",
-            "link": "https://t.me/AeonOrg",
+            "link": "https://t.me/pyronext",
         },
     ],
 }

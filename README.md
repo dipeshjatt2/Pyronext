@@ -31,7 +31,7 @@ It is recommended to use `uv` for managing dependencies as per our project guide
 
 ```bash
 # Clone the repository
-git clone https://github.com/dipeshjatt2/Electrogram.git pyronext
+git clone https://github.com/dipeshjatt2/Pyronext.git pyronext
 
 # Navigate into the directory
 cd pyronext
