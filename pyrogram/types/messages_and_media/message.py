@@ -1425,10 +1425,10 @@ class Message(Object, Update):
                 users,
             )
 
-            if message.via_business_bot_id:
+            if getattr(message, 'via_business_bot_id', None):
                 sender_business_bot = types.User._parse(
                     client,
-                    users.get(message.via_business_bot_id),
+                    users.get(getattr(message, 'via_business_bot_id', None)),
                 )
 
             parsed_message = Message(
