@@ -34,7 +34,6 @@ from pyrogram.handlers import (
 from pyrogram.raw.types import (
     UpdateBotBusinessConnect,
     UpdateBotCallbackQuery,
-    UpdateNewEphemeralMessage,
     UpdateBotChatInviteRequester,
     UpdateBotDeleteBusinessMessage,
     UpdateBotEditBusinessMessage,
@@ -47,8 +46,7 @@ from pyrogram.raw.types import (
     UpdateBotShippingQuery,
     UpdateBotStopped,
     UpdateBusinessBotCallbackQuery,
-        UpdateNewEphemeralMessage,
-    UpdateChannelParticipant,
+        UpdateChannelParticipant,
     UpdateChatParticipant,
     UpdateDeleteChannelMessages,
     UpdateDeleteMessages,
@@ -59,6 +57,8 @@ from pyrogram.raw.types import (
     UpdateNewChannelMessage,
     UpdateNewMessage,
     UpdateNewScheduledMessage,
+    UpdateNewEphemeralMessage,
+        UpdateNewEphemeralMessage,
     UpdateStory,
     UpdateUserStatus,
 )
@@ -71,8 +71,9 @@ class Dispatcher:
         UpdateNewMessage,
         UpdateNewChannelMessage,
         UpdateNewScheduledMessage,
+    UpdateNewEphemeralMessage,
         UpdateNewEphemeralMessage,
-    )
+        )
     NEW_BOT_BUSINESS_MESSAGE_UPDATES = (UpdateBotNewBusinessMessage,)
     EDIT_MESSAGE_UPDATES = (
         UpdateEditMessage,
@@ -86,11 +87,9 @@ class Dispatcher:
     DELETE_BOT_BUSINESS_MESSAGES_UPDATES = (UpdateBotDeleteBusinessMessage,)
     CALLBACK_QUERY_UPDATES = (
         UpdateBotCallbackQuery,
-    UpdateNewEphemeralMessage,
-        UpdateInlineBotCallbackQuery,
+    UpdateInlineBotCallbackQuery,
         UpdateBusinessBotCallbackQuery,
-        UpdateNewEphemeralMessage,
-    )
+        )
     CHAT_MEMBER_UPDATES = (
         UpdateChatParticipant,
         UpdateChannelParticipant,
@@ -119,23 +118,7 @@ class Dispatcher:
         self.groups[0] = [self.conversation_handler]
 
         async def message_parser(update, users, chats):
-            if isinstance(update, UpdateNewEphemeralMessage):
-                print(f"DISPATCHER: Received UpdateNewEphemeralMessage! data={update.data}")
-                # We need to answer the ephemeral callback query so it doesn't spin forever
-                try:
-                    peer = await self.client.resolve_peer(update.user_id)
-                    await self.client.invoke(
-                        pyrogram.raw.functions.ephemeral.GetCallbackAnswer(
-                            peer=peer,
-                            id=update.msg_id,
-                            data=update.data
-                        )
-                    )
-                except Exception:
-                    pass
-                # The data is the command typed, e.g. b'/secret'
-                if update.message and not update.message.message and update.data:
-                    update.message.message = update.data.decode('utf-8', 'ignore')
+
 
             return (
                 await pyrogram.types.Message._parse(
