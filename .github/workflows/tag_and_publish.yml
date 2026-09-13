@@ -57,11 +57,14 @@ jobs:
       - name: Build and publish
         if: env.RELEASE_EXISTS == 'false'
         run: |
+          if [ -z "${{ secrets.PYPI_API_TOKEN }}" ]; then
+            echo "Error: PYPI_API_TOKEN secret is missing in your GitHub Repo Secrets!"
+            echo "Please go to Settings > Secrets and Variables > Actions, and add PYPI_API_TOKEN."
+            exit 1
+          fi
           python -m pip install --upgrade pip
           pip install -e '.[dev]'
           hatch build
-          hatch publish
+          hatch publish -u __token__ -a "${{ secrets.PYPI_API_TOKEN }}"
         env:
-          HATCH_INDEX_USER: __token__
-          HATCH_INDEX_AUTH: ${{ secrets.PYPI_API_TOKEN }}
           PYTHON_KEYRING_BACKEND: keyring.backends.null.Keyring
