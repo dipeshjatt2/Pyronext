@@ -51,7 +51,7 @@ class Game(Object):
         self.animation = animation
 
     @staticmethod
-    def _parse(client, message: raw.types.Message) -> Game:
+    def _parse(client, message: raw.base.Message) -> Game:
         game: raw.types.Game = message.media.game
         animation = None
 

@@ -1153,7 +1153,7 @@ class Message(Object, Update):
 
             return parsed_message
 
-        if isinstance(message, raw.types.Message):
+        if isinstance(message, (raw.types.Message, raw.types.EphemeralMessage)):
             message_thread_id = None
             entities = types.List(
                 [
@@ -1173,7 +1173,7 @@ class Message(Object, Update):
             forward_date = None
             is_topic_message = None
 
-            forward_header = message.fwd_from  # type: raw.types.MessageFwdHeader
+            forward_header = getattr(message, 'fwd_from', None)  # type: raw.types.MessageFwdHeader
 
             if forward_header:
                 forward_date = utils.timestamp_to_datetime(forward_header.date)
@@ -1421,7 +1421,7 @@ class Message(Object, Update):
 
             reactions = types.MessageReactions._parse(
                 client,
-                message.reactions,
+                getattr(message, 'reactions', None),
                 users,
             )
 
@@ -1460,7 +1460,7 @@ class Message(Object, Update):
                     if media is not None and web_page_preview is None
                     else None
                 ),
-                author_signature=message.post_author,
+                author_signature=getattr(message, 'post_author', None),
                 has_protected_content=message.noforwards,
                 has_media_spoiler=has_media_spoiler,
                 forward_from=forward_from,
@@ -1470,14 +1470,14 @@ class Message(Object, Update):
                 forward_signature=forward_signature,
                 forward_date=forward_date,
                 is_topic_message=is_topic_message,
-                mentioned=message.mentioned,
+                mentioned=getattr(message, 'mentioned', None),
                 scheduled=is_scheduled,
-                from_scheduled=message.from_scheduled,
+                from_scheduled=getattr(message, 'from_scheduled', None),
                 media=media_type,
-                edit_hide=message.edit_hide,
-                edit_date=utils.timestamp_to_datetime(message.edit_date),
-                media_group_id=str(message.grouped_id)
-                if message.grouped_id
+                edit_hide=getattr(message, 'edit_hide', None),
+                edit_date=utils.timestamp_to_datetime(getattr(message, 'edit_date', None)),
+                media_group_id=str(getattr(message, 'grouped_id', None))
+                if getattr(message, 'grouped_id', None)
                 else None,
                 invert_media=message.invert_media,
                 photo=photo,
@@ -1503,11 +1503,11 @@ class Message(Object, Update):
                 document=document,
                 poll=poll,
                 dice=dice,
-                views=message.views,
-                forwards=message.forwards,
+                views=getattr(message, 'views', None),
+                forwards=getattr(message, 'forwards', None),
                 via_bot=types.User._parse(
                     client,
-                    users.get(message.via_bot_id),
+                    users.get(getattr(message, 'via_bot_id', None)),
                 ),
                 outgoing=message.out,
                 reply_markup=cast(

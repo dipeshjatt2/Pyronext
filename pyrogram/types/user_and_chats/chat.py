@@ -516,7 +516,7 @@ class Chat(Object):
     @staticmethod
     def _parse(
         client,
-        message: raw.types.Message | raw.types.MessageService,
+        message: raw.base.Message | raw.types.MessageService,
         users: dict,
         chats: dict,
         is_chat: bool,
