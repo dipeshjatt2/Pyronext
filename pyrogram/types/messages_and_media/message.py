@@ -1747,6 +1747,23 @@ class Message(Object, Update):
             message_id=self.id,
         )
 
+    async def reply_ephemeral(
+        self,
+        text: str,
+        parse_mode: enums.ParseMode | None = None,
+        entities: list[types.MessageEntity] | None = None,
+        reply_markup: types.ReplyMarkup = None,
+    ) -> types.Message | None:
+        return await self._client.send_ephemeral_message(
+            chat_id=self.chat.id,
+            user_id=self.from_user.id if self.from_user else self.chat.id,
+            text=text,
+            parse_mode=parse_mode,
+            entities=entities,
+            reply_to_message_id=self.id,
+            reply_markup=reply_markup
+        )
+
     async def reply_text(
         self,
         text: str,
