@@ -9,8 +9,10 @@ class RequestCallbackAnswer:
         self: pyrogram.Client,
         chat_id: int | str,
         message_id: int,
-        callback_data: str | bytes,
+        callback_data: str | bytes | None = None,
+        game: bool | None = None,
         password: str | None = None,
+        retries: int = 0,
         timeout: int = 10,
     ):
         """Request a callback answer from bots.
@@ -54,9 +56,13 @@ class RequestCallbackAnswer:
         """
 
         data = (
-            bytes(callback_data, "utf-8")
-            if isinstance(callback_data, str)
-            else callback_data
+            (
+                bytes(callback_data, "utf-8")
+                if isinstance(callback_data, str)
+                else callback_data
+            )
+            if callback_data is not None
+            else None
         )
 
         if password:
@@ -76,7 +82,8 @@ class RequestCallbackAnswer:
                 msg_id=message_id,
                 data=data,
                 password=password_check,
+                game=game,
             ),
-            retries=0,
+            retries=retries,
             timeout=timeout,
         )

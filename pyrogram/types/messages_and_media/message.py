@@ -1406,7 +1406,7 @@ class Message(Object, Update):
 
             rich_message = (
                 await types.RichMessage._parse(
-                    client, message.rich_message, users, chats
+                    client, cast("raw.base.RichMessage", message.rich_message), users, chats
                 )
                 if getattr(message, "rich_message", None)
                 else None
@@ -2400,7 +2400,7 @@ class Message(Object, Update):
 
         return await self._client.send_cached_media(
             chat_id=chat_id,
-            file_id=file_id,
+            file_id=file_id or "",
             caption=caption,
             parse_mode=parse_mode,
             caption_entities=caption_entities,
@@ -5376,7 +5376,7 @@ class Message(Object, Update):
 
             if self.sticker or self.video_note:
                 return await send_media(
-                    file_id=file_id,
+                    file_id=file_id or "",
                     message_thread_id=message_thread_id,
                     allow_paid_broadcast=allow_paid_broadcast,
                     allow_paid_stars=allow_paid_stars,
@@ -5393,7 +5393,7 @@ class Message(Object, Update):
                 caption_entities = self.caption_entities
 
             return await send_media(
-                file_id=file_id,
+                file_id=file_id or "",
                 caption=caption,
                 parse_mode=parse_mode,
                 caption_entities=caption_entities,
@@ -5561,21 +5561,14 @@ class Message(Object, Update):
                     for button in row
                     if label == button.text
                 )
-            except IndexError:
+            except StopIteration:
                 raise ValueError(
-                    f"The button with label '{x}' doesn't exists",
+                    f"The button with label '{x}' doesn't exist",
                 ) from None
         else:
             raise ValueError("Invalid arguments")
 
         if is_inline:
-            if button.callback_data:
-                return await self._client.request_callback_answer(
-                    chat_id=self.chat.id,
-                    message_id=self.id,
-                    callback_data=cast("bytes", button.callback_data),
-                    timeout=timeout,
-                )
             if button.requires_password:
                 if password is None:
                     raise ValueError("This button requires a password")
@@ -5583,9 +5576,26 @@ class Message(Object, Update):
                 return await self._client.request_callback_answer(
                     chat_id=self.chat.id,
                     message_id=self.id,
-                    callback_data=cast("bytes", button.callback_data),
+                    callback_data=button.callback_data,
                     password=password,
                     timeout=timeout,
+                    retries=0,
+                )
+            if button.callback_data:
+                return await self._client.request_callback_answer(
+                    chat_id=self.chat.id,
+                    message_id=self.id,
+                    callback_data=button.callback_data,
+                    timeout=timeout,
+                    retries=0,
+                )
+            if button.callback_game:
+                return await self._client.request_callback_answer(
+                    chat_id=self.chat.id,
+                    message_id=self.id,
+                    game=True,
+                    timeout=timeout,
+                    retries=0,
                 )
             if button.url:
                 return button.url
@@ -5607,18 +5617,12 @@ class Message(Object, Update):
 
                 r = await self._client.invoke(
                     raw.functions.messages.RequestWebView(
-                        peer=cast(
-                            "raw.base.InputPeer",
-                            utils.get_input_peer(
-                                await self._client.resolve_peer(self.chat.id),
-                            ),
+                        peer=utils.get_input_peer(
+                            await self._client.resolve_peer(self.chat.id),
                         ),
-                        bot=cast(
-                            "raw.base.InputUser",
-                            utils.get_input_user(
-                                await self._client.resolve_peer(
-                                    cast("int", bot_peer_id)
-                                ),
+                        bot=utils.get_input_user(
+                            await self._client.resolve_peer(
+                                cast("int", bot_peer_id)
                             ),
                         ),
                         url=web_app.url,

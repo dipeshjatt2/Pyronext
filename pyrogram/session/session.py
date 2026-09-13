@@ -544,7 +544,7 @@ class Session:
 
         query_name = ".".join(inner_query.QUALNAME.split(".")[1:])
 
-        while retries > 0:
+        while True:
             if self.currently_restarting:
                 while self.currently_restarting:  # noqa: ASYNC110
                     await asyncio.sleep(1)
@@ -570,7 +570,9 @@ class Session:
                     query_name,
                 )
 
-                await asyncio.sleep(amount)
+                await asyncio.sleep(
+                    float(amount) if isinstance(amount, int | float) else 1.0
+                )
             except (
                 OSError,
                 RuntimeError,
@@ -578,10 +580,10 @@ class Session:
                 ServiceUnavailable,
                 asyncio.TimeoutError,
             ) as e:
-                retries -= 1
-                if retries == 0:
+                if retries <= 0:
                     self.client.updates_invoke_error = e
                     raise
+                retries -= 1
 
                 if (
                     isinstance(e, OSError | RuntimeError) and "handler" in str(e)
@@ -607,5 +609,3 @@ class Session:
             except Exception as e:
                 self.client.updates_invoke_error = e
                 raise
-
-        raise asyncio.TimeoutError("Exceeded maximum number of retries")
