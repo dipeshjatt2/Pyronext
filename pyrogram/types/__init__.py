@@ -49,6 +49,7 @@ from .bots_and_keyboards import (
     RequestPeerTypeUser,
     RichButtonStyle,
     SentWebAppMessage,
+    SwitchInlineQueryChosenChat,
     WebAppInfo,
 )
 from .business import (
@@ -606,6 +607,7 @@ __all__ = [
     "StrippedThumbnail",
     "SuccessfulPayment",
     "SuggestedPost",
+    "SwitchInlineQueryChosenChat",
     "TermsOfService",
     "Thumbnail",
     "TranslatedText",

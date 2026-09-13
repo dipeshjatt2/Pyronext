@@ -78,6 +78,8 @@ class InlineKeyboardButton(Object):
         user_id: int | None = None,
         switch_inline_query: str | None = None,
         switch_inline_query_current_chat: str | None = None,
+        switch_inline_query_chosen_chat: types.SwitchInlineQueryChosenChat
+        | None = None,
         callback_game: types.CallbackGame | None = None,
         requires_password: bool | None = None,
         copy_text: str | None = None,
@@ -95,6 +97,7 @@ class InlineKeyboardButton(Object):
         self.user_id = user_id
         self.switch_inline_query = switch_inline_query
         self.switch_inline_query_current_chat = switch_inline_query_current_chat
+        self.switch_inline_query_chosen_chat = switch_inline_query_chosen_chat
         self.callback_game = callback_game
         self.requires_password = requires_password
         self.copy_text = copy_text
@@ -155,6 +158,14 @@ class InlineKeyboardButton(Object):
             )
 
         if isinstance(button_type, raw.types.InlineButtonTypeSwitchInline):
+            if button_type.peer_types:
+                return InlineKeyboardButton(
+                    text=b.text,
+                    switch_inline_query_chosen_chat=types.SwitchInlineQueryChosenChat.read(
+                        button_type
+                    ),
+                    style=style,
+                )
             if button_type.same_peer:
                 return InlineKeyboardButton(
                     text=b.text,
@@ -246,6 +257,13 @@ class InlineKeyboardButton(Object):
                         await client.resolve_peer(self.user_id)
                     ),
                 ),
+                style=style,
+            )
+
+        if self.switch_inline_query_chosen_chat is not None:
+            return raw.types.KeyboardInlineButton(
+                text=self.text,
+                type=await self.switch_inline_query_chosen_chat.write(),
                 style=style,
             )
 

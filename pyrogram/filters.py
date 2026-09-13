@@ -727,16 +727,20 @@ def command(
 
             without_prefix = text[len(prefix) :]
 
+            escaped_username = re.escape(username or "")
+
             for cmd in flt.commands:
+                escaped_command = re.escape(cmd)
+
                 if not re.match(
-                    rf"^(?:{cmd}(?:@?{username})?)(?:\s|$)",
+                    rf"^(?:{escaped_command}(?:@?{escaped_username})?)(?:\s|$)",
                     without_prefix,
                     flags=re.IGNORECASE if not flt.case_sensitive else 0,
                 ):
                     continue
 
                 without_command = re.sub(
-                    rf"{cmd}(?:@?{username})?\s?",
+                    rf"{escaped_command}(?:@?{escaped_username})?\s?",
                     "",
                     without_prefix,
                     count=1,
@@ -952,3 +956,44 @@ class topic(Filter, set):
             return False
 
         return update.topic and update.topic.id in self
+
+
+# region quote
+async def quote_filter(_, __, message: Message) -> bool:
+    return bool(getattr(message, "quote", None))
+
+
+quote = create(quote_filter)
+"""Filter messages that contain a quote."""
+# endregion
+
+
+# region story
+async def story_filter(_, __, message: Message) -> bool:
+    return bool(getattr(message, "story", None))
+
+
+story = create(story_filter)
+"""Filter messages that contain a story."""
+# endregion
+
+
+# region forum
+async def forum_filter(_, __, update: Update) -> bool:
+    chat = getattr(update, "chat", None)
+    return bool(chat and getattr(chat, "is_forum", False))
+
+
+forum = create(forum_filter)
+"""Filter messages sent in forum topics."""
+# endregion
+
+
+# region business
+async def business_filter(_, __, update: Update) -> bool:
+    return bool(getattr(update, "business_connection_id", None))
+
+
+business = create(business_filter)
+"""Filter messages sent via Telegram Business."""
+# endregion

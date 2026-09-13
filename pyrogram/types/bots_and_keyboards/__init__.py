@@ -51,6 +51,7 @@ from .requested_chats import RequestedChats
 from .requested_user import RequestedUser
 from .rich_button_style import RichButtonStyle
 from .sent_web_app_message import SentWebAppMessage
+from .switch_inline_query_chosen_chat import SwitchInlineQueryChosenChat
 from .web_app_info import WebAppInfo
 
 __all__ = [
@@ -92,5 +93,6 @@ __all__ = [
     "RequestedUser",
     "RichButtonStyle",
     "SentWebAppMessage",
+    "SwitchInlineQueryChosenChat",
     "WebAppInfo",
 ]

@@ -45,7 +45,6 @@ class Str(str):
         )
 
 
-
 class EphemeralMessageWrapper:
     def __init__(self, message):
         self._raw_message = message
@@ -55,6 +54,7 @@ class EphemeralMessageWrapper:
         if item == "peer_id" and val is None:
             return getattr(self._raw_message, "from_id", None)
         return val
+
 
 class Message(Object, Update):
     """A message.
@@ -1186,7 +1186,7 @@ class Message(Object, Update):
             forward_date = None
             is_topic_message = None
 
-            forward_header = getattr(message, 'fwd_from', None)  # type: raw.types.MessageFwdHeader
+            forward_header = getattr(message, "fwd_from", None)  # type: raw.types.MessageFwdHeader
 
             if forward_header:
                 forward_date = utils.timestamp_to_datetime(forward_header.date)
@@ -1419,7 +1419,10 @@ class Message(Object, Update):
 
             rich_message = (
                 await types.RichMessage._parse(
-                    client, cast("raw.base.RichMessage", message.rich_message), users, chats
+                    client,
+                    cast("raw.base.RichMessage", message.rich_message),
+                    users,
+                    chats,
                 )
                 if getattr(message, "rich_message", None)
                 else None
@@ -1434,14 +1437,14 @@ class Message(Object, Update):
 
             reactions = types.MessageReactions._parse(
                 client,
-                getattr(message, 'reactions', None),
+                getattr(message, "reactions", None),
                 users,
             )
 
-            if getattr(message, 'via_business_bot_id', None):
+            if getattr(message, "via_business_bot_id", None):
                 sender_business_bot = types.User._parse(
                     client,
-                    users.get(getattr(message, 'via_business_bot_id', None)),
+                    users.get(getattr(message, "via_business_bot_id", None)),
                 )
 
             parsed_message = Message(
@@ -1473,7 +1476,7 @@ class Message(Object, Update):
                     if media is not None and web_page_preview is None
                     else None
                 ),
-                author_signature=getattr(message, 'post_author', None),
+                author_signature=getattr(message, "post_author", None),
                 has_protected_content=message.noforwards,
                 has_media_spoiler=has_media_spoiler,
                 forward_from=forward_from,
@@ -1483,14 +1486,16 @@ class Message(Object, Update):
                 forward_signature=forward_signature,
                 forward_date=forward_date,
                 is_topic_message=is_topic_message,
-                mentioned=getattr(message, 'mentioned', None),
+                mentioned=getattr(message, "mentioned", None),
                 scheduled=is_scheduled,
-                from_scheduled=getattr(message, 'from_scheduled', None),
+                from_scheduled=getattr(message, "from_scheduled", None),
                 media=media_type,
-                edit_hide=getattr(message, 'edit_hide', None),
-                edit_date=utils.timestamp_to_datetime(getattr(message, 'edit_date', None)),
-                media_group_id=str(getattr(message, 'grouped_id', None))
-                if getattr(message, 'grouped_id', None)
+                edit_hide=getattr(message, "edit_hide", None),
+                edit_date=utils.timestamp_to_datetime(
+                    getattr(message, "edit_date", None)
+                ),
+                media_group_id=str(getattr(message, "grouped_id", None))
+                if getattr(message, "grouped_id", None)
                 else None,
                 invert_media=message.invert_media,
                 photo=photo,
@@ -1516,11 +1521,11 @@ class Message(Object, Update):
                 document=document,
                 poll=poll,
                 dice=dice,
-                views=getattr(message, 'views', None),
-                forwards=getattr(message, 'forwards', None),
+                views=getattr(message, "views", None),
+                forwards=getattr(message, "forwards", None),
                 via_bot=types.User._parse(
                     client,
-                    users.get(getattr(message, 'via_bot_id', None)),
+                    users.get(getattr(message, "via_bot_id", None)),
                 ),
                 outgoing=message.out,
                 reply_markup=cast(
@@ -1775,6 +1780,76 @@ class Message(Object, Update):
             parse_mode=parse_mode,
             entities=entities,
             reply_to_message_id=self.id if quote else None,
+            reply_markup=reply_markup,
+        )
+
+    async def delete_ephemeral(self) -> bool:
+        """Delete this ephemeral message."""
+        return await self._client.delete_ephemeral_message(
+            chat_id=self.chat.id,
+            receiver_user_id=self.from_user.id if self.from_user else self.chat.id,
+            ephemeral_message_id=self.id,
+        )
+
+    async def edit_ephemeral_text(
+        self,
+        text: str,
+        parse_mode: enums.ParseMode | None = None,
+        entities: list[types.MessageEntity] | None = None,
+        reply_markup: types.InlineKeyboardMarkup | None = None,
+    ) -> types.Message | None:
+        """Edit text of this ephemeral message."""
+        return await self._client.edit_ephemeral_message_text(
+            chat_id=self.chat.id,
+            receiver_user_id=self.from_user.id if self.from_user else self.chat.id,
+            ephemeral_message_id=self.id,
+            text=text,
+            parse_mode=parse_mode,
+            entities=entities,
+            reply_markup=reply_markup,
+        )
+
+    async def edit_ephemeral_caption(
+        self,
+        caption: str = "",
+        parse_mode: enums.ParseMode | None = None,
+        caption_entities: list[types.MessageEntity] | None = None,
+        reply_markup: types.InlineKeyboardMarkup | None = None,
+    ) -> types.Message | None:
+        """Edit caption of this ephemeral message."""
+        return await self._client.edit_ephemeral_message_caption(
+            chat_id=self.chat.id,
+            receiver_user_id=self.from_user.id if self.from_user else self.chat.id,
+            ephemeral_message_id=self.id,
+            caption=caption,
+            parse_mode=parse_mode,
+            caption_entities=caption_entities,
+            reply_markup=reply_markup,
+        )
+
+    async def edit_ephemeral_media(
+        self,
+        media: types.InputMedia,
+        reply_markup: types.InlineKeyboardMarkup | None = None,
+    ) -> types.Message | None:
+        """Edit media of this ephemeral message."""
+        return await self._client.edit_ephemeral_message_media(
+            chat_id=self.chat.id,
+            receiver_user_id=self.from_user.id if self.from_user else self.chat.id,
+            ephemeral_message_id=self.id,
+            media=media,
+            reply_markup=reply_markup,
+        )
+
+    async def edit_ephemeral_reply_markup(
+        self,
+        reply_markup: types.InlineKeyboardMarkup | None = None,
+    ) -> types.Message | None:
+        """Edit reply markup of this ephemeral message."""
+        return await self._client.edit_ephemeral_message_reply_markup(
+            chat_id=self.chat.id,
+            receiver_user_id=self.from_user.id if self.from_user else self.chat.id,
+            ephemeral_message_id=self.id,
             reply_markup=reply_markup,
         )
 
