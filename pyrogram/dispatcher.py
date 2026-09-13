@@ -46,7 +46,7 @@ from pyrogram.raw.types import (
     UpdateBotShippingQuery,
     UpdateBotStopped,
     UpdateBusinessBotCallbackQuery,
-        UpdateChannelParticipant,
+    UpdateChannelParticipant,
     UpdateChatParticipant,
     UpdateDeleteChannelMessages,
     UpdateDeleteMessages,
@@ -55,10 +55,9 @@ from pyrogram.raw.types import (
     UpdateInlineBotCallbackQuery,
     UpdateMessagePoll,
     UpdateNewChannelMessage,
+    UpdateNewEphemeralMessage,
     UpdateNewMessage,
     UpdateNewScheduledMessage,
-    UpdateNewEphemeralMessage,
-        UpdateNewEphemeralMessage,
     UpdateStory,
     UpdateUserStatus,
 )
@@ -71,9 +70,8 @@ class Dispatcher:
         UpdateNewMessage,
         UpdateNewChannelMessage,
         UpdateNewScheduledMessage,
-    UpdateNewEphemeralMessage,
         UpdateNewEphemeralMessage,
-        )
+    )
     NEW_BOT_BUSINESS_MESSAGE_UPDATES = (UpdateBotNewBusinessMessage,)
     EDIT_MESSAGE_UPDATES = (
         UpdateEditMessage,
@@ -87,9 +85,9 @@ class Dispatcher:
     DELETE_BOT_BUSINESS_MESSAGES_UPDATES = (UpdateBotDeleteBusinessMessage,)
     CALLBACK_QUERY_UPDATES = (
         UpdateBotCallbackQuery,
-    UpdateInlineBotCallbackQuery,
+        UpdateInlineBotCallbackQuery,
         UpdateBusinessBotCallbackQuery,
-        )
+    )
     CHAT_MEMBER_UPDATES = (
         UpdateChatParticipant,
         UpdateChannelParticipant,

@@ -742,6 +742,10 @@ class Client(Methods):
             self.dispatcher.updates_queue.put_nowait((updates.update, {}, {}))
         elif isinstance(updates, raw.types.UpdatesTooLong):
             log.info(updates)
+        elif isinstance(updates, raw.base.Update):
+            # Bare update objects (e.g. UpdateNewEphemeralMessage) that arrive
+            # outside the standard Updates/UpdateShort containers.
+            self.dispatcher.updates_queue.put_nowait((updates, {}, {}))
 
     async def load_session(self) -> None:
         await self.storage.open()

@@ -48,10 +48,13 @@ class Str(str):
 
 class EphemeralMessageWrapper:
     def __init__(self, message):
-        self.message = message
-    
+        self._raw_message = message
+
     def __getattr__(self, item):
-        return getattr(self.message, item, None)
+        val = getattr(self._raw_message, item, None)
+        if item == "peer_id" and val is None:
+            return getattr(self._raw_message, "from_id", None)
+        return val
 
 class Message(Object, Update):
     """A message.
@@ -1760,6 +1763,7 @@ class Message(Object, Update):
     async def reply_ephemeral(
         self,
         text: str,
+        quote: bool = False,
         parse_mode: enums.ParseMode | None = None,
         entities: list[types.MessageEntity] | None = None,
         reply_markup: types.ReplyMarkup = None,
@@ -1770,8 +1774,8 @@ class Message(Object, Update):
             text=text,
             parse_mode=parse_mode,
             entities=entities,
-            reply_to_message_id=self.id,
-            reply_markup=reply_markup
+            reply_to_message_id=self.id if quote else None,
+            reply_markup=reply_markup,
         )
 
     async def reply_text(

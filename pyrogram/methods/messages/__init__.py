@@ -40,10 +40,10 @@ from .send_chat_action import SendChatAction
 from .send_contact import SendContact
 from .send_dice import SendDice
 from .send_document import SendDocument
+from .send_ephemeral_message import SendEphemeralMessage
 from .send_location import SendLocation
 from .send_media_group import SendMediaGroup
 from .send_message import SendMessage
-from .send_ephemeral_message import SendEphemeralMessage
 from .send_message_draft import SendMessageDraft
 from .send_paid_media import SendPaidMedia
 from .send_paid_reaction import SendPaidReaction
