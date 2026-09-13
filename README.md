@@ -11,6 +11,35 @@
   </p>
 </div>
 
+### 3. Ephemeral Bot Messages (New!)
+Pyronext introduces native high-level wrappers for Telegram's new **Ephemeral Messages** (messages visible only to a specific user).
+
+You can easily reply ephemerally to a user without spamming the chat:
+
+```python
+from pyrogram import Client, filters
+
+app = Client("my_bot", api_id=12345, api_hash="your_api_hash", bot_token="your_bot_token")
+
+@app.on_message(filters.command("secret"))
+async def secret_command(client, message):
+    # Sends a message in the chat that ONLY the sender can see!
+    await message.reply_ephemeral("Shh! This is a secret ephemeral message.")
+
+app.run()
+```
+
+Or send one directly via the client:
+```python
+await app.send_ephemeral_message(
+    chat_id=chat_id,
+    user_id=user_id,
+    text="Ephemeral text!"
+)
+```
+
+---
+
 ---
 
 ## ⚡ About Pyronext
@@ -84,8 +113,34 @@ async def handle_bot_menu(client, message):
 app.run()
 ```
 
----
+### 3. Ephemeral Bot Messages (New!)
+Pyronext introduces native high-level wrappers for Telegram's new **Ephemeral Messages** (messages visible only to a specific user).
 
+You can easily reply ephemerally to a user without spamming the chat:
+
+```python
+from pyrogram import Client, filters
+
+app = Client("my_bot", api_id=12345, api_hash="your_api_hash", bot_token="your_bot_token")
+
+@app.on_message(filters.command("secret"))
+async def secret_command(client, message):
+    # Sends a message in the chat that ONLY the sender can see!
+    await message.reply_ephemeral("Shh! This is a secret ephemeral message.")
+
+app.run()
+```
+
+Or send one directly via the client:
+```python
+await app.send_ephemeral_message(
+    chat_id=chat_id,
+    user_id=user_id,
+    text="Ephemeral text!"
+)
+```
+
+---
 ## ⚠️ Disclaimer
 
 This repository is **Pyronext (an Electrogram/Pyrogram fork)** created specifically for our projects and modified to suit our needs.
