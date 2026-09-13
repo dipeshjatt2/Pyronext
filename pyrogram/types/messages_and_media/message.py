@@ -45,6 +45,14 @@ class Str(str):
         )
 
 
+
+class EphemeralMessageWrapper:
+    def __init__(self, message):
+        self.message = message
+    
+    def __getattr__(self, item):
+        return getattr(self.message, item, None)
+
 class Message(Object, Update):
     """A message.
 
@@ -1154,6 +1162,8 @@ class Message(Object, Update):
             return parsed_message
 
         if isinstance(message, (raw.types.Message, raw.types.EphemeralMessage)):
+            if isinstance(message, raw.types.EphemeralMessage):
+                message = EphemeralMessageWrapper(message)
             message_thread_id = None
             entities = types.List(
                 [
