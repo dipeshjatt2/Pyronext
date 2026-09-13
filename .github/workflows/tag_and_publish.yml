@@ -12,6 +12,7 @@ jobs:
     environment: release
     permissions:
       id-token: write
+      contents: write
 
     steps:
       - name: Checkout Repository
@@ -47,7 +48,7 @@ jobs:
         if: env.RELEASE_EXISTS == 'false'
         uses: comnoco/create-release-action@v2
         env:
-          GITHUB_TOKEN: ${{ secrets.GX_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.VERSION }}
           release_name: Release ${{ env.VERSION }}
