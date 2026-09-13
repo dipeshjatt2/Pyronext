@@ -102,6 +102,14 @@ class CallbackQuery(Object, Update):
                 message = cast(
                     "types.Message", await client.get_messages(chat_id, message_id)
                 )
+        elif isinstance(callback_query, raw.types.UpdateEphemeralBotCallbackQuery):
+            chat_id = utils.get_peer_id(callback_query.peer) if callback_query.peer else None
+            # Message is EphemeralMessage, we could try to parse it but normally we just skip or construct a partial
+            message = types.Message(
+                id=callback_query.msg_id,
+                chat=types.Chat(id=chat_id, type=enums.ChatType.PRIVATE, client=client) if chat_id else None,
+                client=client,
+            )
         elif isinstance(callback_query, raw.types.UpdateInlineBotCallbackQuery):
             inline_message_id = utils.pack_inline_message_id(callback_query.msg_id)
         elif isinstance(callback_query, raw.types.UpdateBusinessBotCallbackQuery):

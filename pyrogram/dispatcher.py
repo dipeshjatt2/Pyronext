@@ -34,6 +34,7 @@ from pyrogram.handlers import (
 from pyrogram.raw.types import (
     UpdateBotBusinessConnect,
     UpdateBotCallbackQuery,
+    UpdateNewEphemeralMessage,
     UpdateBotChatInviteRequester,
     UpdateBotDeleteBusinessMessage,
     UpdateBotEditBusinessMessage,
@@ -46,6 +47,7 @@ from pyrogram.raw.types import (
     UpdateBotShippingQuery,
     UpdateBotStopped,
     UpdateBusinessBotCallbackQuery,
+        UpdateNewEphemeralMessage,
     UpdateChannelParticipant,
     UpdateChatParticipant,
     UpdateDeleteChannelMessages,
@@ -69,6 +71,7 @@ class Dispatcher:
         UpdateNewMessage,
         UpdateNewChannelMessage,
         UpdateNewScheduledMessage,
+        UpdateNewEphemeralMessage,
     )
     NEW_BOT_BUSINESS_MESSAGE_UPDATES = (UpdateBotNewBusinessMessage,)
     EDIT_MESSAGE_UPDATES = (
@@ -83,8 +86,10 @@ class Dispatcher:
     DELETE_BOT_BUSINESS_MESSAGES_UPDATES = (UpdateBotDeleteBusinessMessage,)
     CALLBACK_QUERY_UPDATES = (
         UpdateBotCallbackQuery,
+    UpdateNewEphemeralMessage,
         UpdateInlineBotCallbackQuery,
         UpdateBusinessBotCallbackQuery,
+        UpdateNewEphemeralMessage,
     )
     CHAT_MEMBER_UPDATES = (
         UpdateChatParticipant,
@@ -114,6 +119,24 @@ class Dispatcher:
         self.groups[0] = [self.conversation_handler]
 
         async def message_parser(update, users, chats):
+            if isinstance(update, UpdateNewEphemeralMessage):
+                print(f"DISPATCHER: Received UpdateNewEphemeralMessage! data={update.data}")
+                # We need to answer the ephemeral callback query so it doesn't spin forever
+                try:
+                    peer = await self.client.resolve_peer(update.user_id)
+                    await self.client.invoke(
+                        pyrogram.raw.functions.ephemeral.GetCallbackAnswer(
+                            peer=peer,
+                            id=update.msg_id,
+                            data=update.data
+                        )
+                    )
+                except Exception:
+                    pass
+                # The data is the command typed, e.g. b'/secret'
+                if update.message and not update.message.message and update.data:
+                    update.message.message = update.data.decode('utf-8', 'ignore')
+
             return (
                 await pyrogram.types.Message._parse(
                     self.client,
@@ -489,7 +512,6 @@ class Dispatcher:
     async def handler_worker(self, lock) -> None:
         while True:
             packet = await self.updates_queue.get()
-
             if packet is None:
                 break
 
