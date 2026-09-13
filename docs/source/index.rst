@@ -1,4 +1,4 @@
-Welcome to Electrogram
+Welcome to Pyronext
 ======================
 
 .. raw:: html
@@ -24,12 +24,12 @@ Welcome to Electrogram
 
     @app.on_message(filters.private)
     async def hello(client, message):
-        await message.reply("Hello from Electrogram!")
+        await message.reply("Hello from Pyronext!")
 
 
     app.run()
 
-**Electrogram** is a modern, elegant and asynchronous :doc:`MTProto API <topics/mtproto-vs-botapi>` framework.
+**Pyronext** is a modern, elegant and asynchronous :doc:`MTProto API <topics/mtproto-vs-botapi>` framework.
 It enables you to easily interact with the main Telegram API through a user account (custom client) or a bot identity
 (bot API alternative) using Python.
 
@@ -46,7 +46,7 @@ First Steps
     :columns: 1
 
     - :doc:`Quick Start <intro/quickstart>`: Overview to get you started quickly.
-    - :doc:`Invoking Methods <start/invoking>`: How to call Electrogram's methods.
+    - :doc:`Invoking Methods <start/invoking>`: How to call Pyronext's methods.
     - :doc:`Handling Updates <start/updates>`: How to handle Telegram updates.
     - :doc:`Error Handling <start/errors>`: How to handle API errors correctly.
 
@@ -56,7 +56,7 @@ API Reference
 .. hlist::
     :columns: 1
 
-    - :doc:`Electrogram Client <api/client>`: Reference details about the Client class.
+    - :doc:`Pyronext Client <api/client>`: Reference details about the Client class.
     - :doc:`Available Methods <api/methods/index>`: List of available high-level methods.
     - :doc:`Available Types <api/types/index>`: List of available high-level types.
     - :doc:`Enumerations <api/enums/index>`: List of available enumerations.
@@ -68,8 +68,8 @@ Meta
 .. hlist::
     :columns: 1
 
-    - :doc:`Electrogram FAQ <faq/index>`: Answers to common Electrogram questions.
-    - :doc:`Support Electrogram <support>`: Ways to show your appreciation.
+    - :doc:`Pyronext FAQ <faq/index>`: Answers to common Pyronext questions.
+    - :doc:`Support Pyronext <support>`: Ways to show your appreciation.
 
 .. toctree::
     :hidden:

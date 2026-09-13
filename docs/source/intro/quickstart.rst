@@ -1,12 +1,12 @@
 Quick Start
 ===========
 
-The next few steps serve as a quick start to see Electrogram in action as fast as possible.
+The next few steps serve as a quick start to see Pyronext in action as fast as possible.
 
-Get Electrogram Real Fast
+Get Pyronext Real Fast
 -------------------------
 
-1. Install Electrogram with ``pip3 install electrogram``.
+1. Install Pyronext with ``pip3 install pyronext``.
 
 2. Get your own Telegram API key from https://my.telegram.org/apps.
 
@@ -23,7 +23,7 @@ Get Electrogram Real Fast
 
         async def main():
             async with Client("my_account", api_id, api_hash) as app:
-                await app.send_message("me", "Greetings from **Electrogram**!")
+                await app.send_message("me", "Greetings from **Pyronext**!")
 
 
         asyncio.run(main())
@@ -36,7 +36,7 @@ Get Electrogram Real Fast
 
 7. Follow the instructions on your terminal to login.
 
-8. Watch Electrogram send a message to yourself.
+8. Watch Pyronext send a message to yourself.
 
 Enjoy the API
 -------------

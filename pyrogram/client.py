@@ -208,7 +208,7 @@ class Client(Methods):
             Defaults to 'other'
     """
 
-    APP_VERSION = f"Electrogram {__version__}"
+    APP_VERSION = f"Pyronext {__version__}"
     DEVICE_MODEL = f"{platform.python_implementation()} {platform.python_version()}"
     SYSTEM_VERSION = f"{platform.system()} {platform.release()}"
 

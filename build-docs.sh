@@ -17,8 +17,8 @@ cd ../..
 
 uv run sphinx-build -b html "docs/source" "docs/build/html" -j auto
 
-REPO_URL="https://5hojib:$GITHUB_TOKEN@github.com/5hojib/Electrogram-docs.git"
-CLONE_DIR="Electrogram-docs"
+REPO_URL="https://5hojib:$GITHUB_TOKEN@github.com/5hojib/Pyronext-docs.git"
+CLONE_DIR="Pyronext-docs"
 
 git clone "$REPO_URL"
 cd "$CLONE_DIR"

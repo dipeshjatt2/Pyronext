@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class InputMediaArea(Object):
     """Content of a media area to be included in story.
 
-    Electrogram currently supports the following types:
+    Pyronext currently supports the following types:
 
     - :obj:`~pyrogram.types.InputMediaAreaChannelPost`
     """

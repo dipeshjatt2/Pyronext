@@ -111,4 +111,4 @@ class MessageServiceType(AutoName):
     "A screenshot of a message in the chat has been taken"
 
     UNKNOWN = auto()
-    "This service message is unsupported by the current version of Electrogram"
+    "This service message is unsupported by the current version of Pyronext"

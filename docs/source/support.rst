@@ -1,4 +1,4 @@
-Support Electrogram
+Support Pyronext
 ===================
 
 .. raw:: html
@@ -21,9 +21,9 @@ Support Electrogram
 
     <br style="clear: both"/>
 
-Electrogram is a free and open source project.
-If you enjoy Electrogram and would like to show your appreciation, consider donating or becoming
-a sponsor of the project. You can support Electrogram via the ways shown below:
+Pyronext is a free and open source project.
+If you enjoy Pyronext and would like to show your appreciation, consider donating or becoming
+a sponsor of the project. You can support Pyronext via the ways shown below:
 
 -----
 

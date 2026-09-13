@@ -1,10 +1,10 @@
 Advanced Usage
 ==============
 
-Electrogram's API -- which consists of well documented :doc:`methods <../api/methods/index>` and
+Pyronext's API -- which consists of well documented :doc:`methods <../api/methods/index>` and
 :doc:`types <../api/types/index>` -- exists to provide an easier interface to the more complex Telegram API.
 
-In this section, you'll be shown the alternative way of communicating with Telegram using Electrogram: the main "raw"
+In this section, you'll be shown the alternative way of communicating with Telegram using Pyronext: the main "raw"
 Telegram API with its functions and types.
 
 .. contents:: Contents
@@ -25,12 +25,12 @@ take into consideration when working with the raw API.
 
 .. tip::
 
-    Every available high-level method in Electrogram is built on top of these raw functions.
+    Every available high-level method in Pyronext is built on top of these raw functions.
 
 Invoking Functions
 ------------------
 
-Unlike the :doc:`methods <../api/methods/index>` found in Electrogram's API, which can be called in the usual simple way,
+Unlike the :doc:`methods <../api/methods/index>` found in Pyronext's API, which can be called in the usual simple way,
 functions to be invoked from the raw Telegram API have a different way of usage.
 
 First of all, both :doc:`raw functions <../telegram/functions/index>` and :doc:`raw types <../telegram/types/index>`
@@ -92,7 +92,7 @@ Chat IDs
 --------
 
 The way Telegram works makes it not possible to directly send a message to a user or a chat by using their IDs only.
-Instead, a pair of ``id`` and ``access_hash`` wrapped in a so called ``InputPeer`` is always needed. Electrogram allows
+Instead, a pair of ``id`` and ``access_hash`` wrapped in a so called ``InputPeer`` is always needed. Pyronext allows
 sending messages with IDs only thanks to cached access hashes.
 
 There are three different InputPeer types, one for each kind of Telegram entity.
@@ -102,17 +102,17 @@ Whenever an InputPeer is needed you must pass one of these:
 - :class:`~pyrogram.raw.types.InputPeerChat` -  Basic Chats
 - :class:`~pyrogram.raw.types.InputPeerChannel` - Channels & Supergroups
 
-But you don't necessarily have to manually instantiate each object because Electrogram already provides
+But you don't necessarily have to manually instantiate each object because Pyronext already provides
 :meth:`~pyrogram.Client.resolve_peer` as a convenience utility method that returns the correct InputPeer
 by accepting a peer ID only.
 
 Another thing to take into consideration about chat IDs is the way they are represented: they are all integers and
 all positive within their respective raw types.
 
-Things are different when working with Electrogram's API because having them in the same space could lead to
-collisions, and that's why Electrogram uses a slightly different representation for each kind of ID.
+Things are different when working with Pyronext's API because having them in the same space could lead to
+collisions, and that's why Pyronext uses a slightly different representation for each kind of ID.
 
-For example, given the ID *123456789*, here's how Electrogram can tell entities apart:
+For example, given the ID *123456789*, here's how Pyronext can tell entities apart:
 
 - ``+ID`` User: *123456789*
 - ``-ID`` Chat: *-123456789*

@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path("../..").resolve()))
 FriendlyStyle.background_color = "#f3f2f1"
 
 # Project information
-project = "Electrogram"
+project = "Pyronext"
 copyright = "2023-present, 5hojib"
 author = "5hojib"
 
@@ -40,7 +40,7 @@ templates_path = []
 
 # HTML options
 html_copy_source = False
-html_title = "Electrogram Docs"
+html_title = "Pyronext Docs"
 html_theme = "sphinx_immaterial"
 html_show_sourcelink = True
 html_permalinks = False
@@ -65,9 +65,9 @@ html_theme_options = {
         "repo": "fontawesome/brands/github",
         "edit": "material/file-edit-outline",
     },
-    "site_url": "https://electrogram-docs.vercel.app/",
+    "site_url": "https://pyronext-docs.vercel.app/",
     "repo_url": "https://github.com/dipeshjatt2/Pyronext/",
-    "repo_name": "Electrogram",
+    "repo_name": "Pyronext",
     "globaltoc_collapse": True,
     "font": {
         "text": "Inter",

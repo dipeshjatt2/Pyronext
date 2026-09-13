@@ -1,9 +1,9 @@
 Smart Plugins
 =============
 
-Electrogram embeds a smart, lightweight yet powerful plugin system that is meant to further simplify the organization
+Pyronext embeds a smart, lightweight yet powerful plugin system that is meant to further simplify the organization
 of large projects and to provide a way for creating pluggable (modular) components that can be easily shared across
-different Electrogram applications with minimal boilerplate code.
+different Pyronext applications with minimal boilerplate code.
 
 .. tip::
 
@@ -28,7 +28,7 @@ after importing your modules, like this:
     This is an example application that replies in private chats with two messages: one containing the same
     text message you sent and the other containing the reversed text message.
 
-    Example: *"Electrogram"* replies with *"Electrogram"* and *"margoryP"*
+    Example: *"Pyronext"* replies with *"Pyronext"* and *"margoryP"*
 
 .. code-block:: text
 
@@ -79,7 +79,7 @@ So, what if you could? Smart Plugins solve this issue by taking care of handlers
 Using Smart Plugins
 -------------------
 
-Setting up your Electrogram project to accommodate Smart Plugins is pretty straightforward:
+Setting up your Pyronext project to accommodate Smart Plugins is pretty straightforward:
 
 #. Create a new folder to store all the plugins (e.g.: "plugins", "handlers", ...).
 #. Put your python files full of plugins inside. Organize them as you wish.
@@ -127,8 +127,8 @@ The first important thing to note is the new ``plugins`` folder. You can put *an
 each file can contain *any decorated function* (handlers) with one limitation: within a single module (file) you must
 use different names for each decorated function.
 
-The second thing is telling Electrogram where to look for your plugins: you can use the Client parameter "plugins";
-the *root* value must match the name of your plugins root folder. Your Electrogram Client instance will **automatically**
+The second thing is telling Pyronext where to look for your plugins: you can use the Client parameter "plugins";
+the *root* value must match the name of your plugins root folder. Your Pyronext Client instance will **automatically**
 scan the folder upon starting to search for valid handlers and register them for you.
 
 Then you'll notice you can now use decorators. That's right, you can apply the usual decorators to your callback

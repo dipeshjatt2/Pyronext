@@ -47,7 +47,7 @@ like send_audio(), send_document(), send_location(), etc...
                             ),
                             InlineKeyboardButton(  # Opens a web URL
                                 "URL",
-                                url="https://electrogram-docs.vercel.app"
+                                url="https://pyronext-docs.vercel.app"
                             ),
                         ],
                         [  # Second row

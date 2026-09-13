@@ -22,15 +22,15 @@ It uses the @on_inline_query decorator to register an InlineQueryHandler.
                 InlineQueryResultArticle(
                     title="Installation",
                     input_message_content=InputTextMessageContent(
-                        "Here's how to install **Electrogram**"
+                        "Here's how to install **Pyronext**"
                     ),
-                    url="https://electrogram-docs.vercel.app/intro/install",
-                    description="How to install Electrogram",
+                    url="https://pyronext-docs.vercel.app/intro/install",
+                    description="How to install Pyronext",
                     reply_markup=InlineKeyboardMarkup(
                         [
                             [InlineKeyboardButton(
                                 "Open website",
-                                url="https://electrogram-docs.vercel.app/intro/install"
+                                url="https://pyronext-docs.vercel.app/intro/install"
                             )]
                         ]
                     )
@@ -38,15 +38,15 @@ It uses the @on_inline_query decorator to register an InlineQueryHandler.
                 InlineQueryResultArticle(
                     title="Usage",
                     input_message_content=InputTextMessageContent(
-                        "Here's how to use **Electrogram**"
+                        "Here's how to use **Pyronext**"
                     ),
-                    url="https://electrogram-docs.vercel.app/start/invoking",
-                    description="How to use Electrogram",
+                    url="https://pyronext-docs.vercel.app/start/invoking",
+                    description="How to use Pyronext",
                     reply_markup=InlineKeyboardMarkup(
                         [
                             [InlineKeyboardButton(
                                 "Open website",
-                                url="https://electrogram-docs.vercel.app/start/invoking"
+                                url="https://pyronext-docs.vercel.app/start/invoking"
                             )]
                         ]
                     )

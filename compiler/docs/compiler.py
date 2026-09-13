@@ -305,7 +305,7 @@ def pyrogram_api() -> None:
     with Path(root, "index.rst").open("w", encoding="utf-8") as f:
         f.write("Available Methods\n=================\n\n")
         f.write(
-            "This page is about Electrogram methods. All the methods listed here are bound to a :class:`~pyrogram.Client` instance,\n",
+            "This page is about Pyronext methods. All the methods listed here are bound to a :class:`~pyrogram.Client` instance,\n",
         )
         f.write(
             "except for :meth:`~pyrogram.idle()` and :meth:`~pyrogram.compose()`, which are special functions that can be found in\n",
@@ -378,7 +378,7 @@ def pyrogram_api() -> None:
     with Path(root, "index.rst").open("w", encoding="utf-8") as f:
         f.write("Available Types\n===============\n\n")
         f.write(
-            "This page is about Electrogram Types. All types listed here are available through the ``pyrogram.types`` package.\n",
+            "This page is about Pyronext Types. All types listed here are available through the ``pyrogram.types`` package.\n",
         )
         f.write(
             "Unless required as argument to a client method, most of the types don't need to be manually instantiated because they\n",
@@ -426,7 +426,7 @@ def pyrogram_api() -> None:
     with Path(root, "index.rst").open("w", encoding="utf-8") as f:
         f.write("Bound Methods\n=============\n\n")
         f.write(
-            "Some Electrogram types define what are called bound methods. Bound methods are functions attached to a type which are\n",
+            "Some Pyronext types define what are called bound methods. Bound methods are functions attached to a type which are\n",
         )
         f.write(
             "accessed via an instance of that type. They make it even easier to call specific methods by automatically inferring\n",
