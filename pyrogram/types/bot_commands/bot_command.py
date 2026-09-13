@@ -14,20 +14,29 @@ class BotCommand(Object):
 
         description (``str``):
             Description of the command; 1-256 characters.
+
+        is_ephemeral (``bool``, *optional*):
+            Pass True to make this command execute ephemerally.
     """
 
-    def __init__(self, command: str, description: str) -> None:
+    def __init__(self, command: str, description: str, is_ephemeral: bool = False) -> None:
         super().__init__()
 
         self.command = command
         self.description = description
+        self.is_ephemeral = is_ephemeral
 
     def write(self) -> raw.types.BotCommand:
         return raw.types.BotCommand(
             command=self.command,
             description=self.description,
+            ephemeral=self.is_ephemeral or None,
         )
 
     @staticmethod
     def read(c: raw.types.BotCommand) -> BotCommand:
-        return BotCommand(command=c.command, description=c.description)
+        return BotCommand(
+            command=c.command,
+            description=c.description,
+            is_ephemeral=bool(c.ephemeral)
+        )
